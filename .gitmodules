@@ -1,0 +1,12 @@
+[submodule "external/sol2"]
+	path = external/sol2
+	url = git://github.com/ThePhD/sol2.git
+[submodule "external/variant"]
+	path = external/variant
+	url = git://github.com/mpark/variant.git
+[submodule "external/fmt"]
+	path = external/fmt
+	url = git://github.com/fmtlib/fmt
+[submodule "external/pybind11"]
+	path = external/pybind11
+	url = git://github.com/pybind/pybind11.git
