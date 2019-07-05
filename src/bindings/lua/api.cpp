@@ -123,7 +123,7 @@ void init(sol::state_view lua_state) {
 		elements.new_usertype<config>("elements::config",
 				"version", sol::readonly_property(&config::version),
 				//"lists", sol::property(&config::get_lists),
-				sol::meta_function::index, [](config& conf, std::size_t idx) -> decltype(auto) { return conf.at(idx - 1); }
+				sol::meta_function::index, [](config& conf, std::size_t idx) -> decltype(auto) { return conf.at(idx); }
 		);
 
 		elements.new_usertype<list_config>("elements::list_config",
@@ -139,7 +139,7 @@ void init(sol::state_view lua_state) {
 						static_cast<void(data::*)(config::ptr)>(&data::load),
 						static_cast<void(data::*)(const std::vector<config::ptr>&)>(&data::load)
 				),
-				sol::meta_function::index, [](data& data, std::size_t idx) -> decltype(auto) { return data.at(idx - 1); },
+				sol::meta_function::index, [](data& data, std::size_t idx) -> decltype(auto) { return data.at(idx); },
 				"save", &data::save
 		);
 

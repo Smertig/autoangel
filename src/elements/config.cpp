@@ -648,25 +648,21 @@ config::ptr config::load(std::string path, uint16_t version) {
 }
 
 std::vector<config::ptr> config::load_folder(std::string folder) {
-	std::vector<std::string> file_list;
-
-	using namespace boost::filesystem;
-	for(auto&& p : boost::make_iterator_range(directory_iterator(folder), {})) {
-		if (is_regular_file(p)) {
-			file_list.push_back(p.path().string());
-		}
-	}
-
 	static const std::regex re{ R"re(PW_(\d\.\d.\d)_v(\d*)\.cfg)re" };
 
 	std::vector<elements::config::ptr> out;
-	for (auto& file : file_list) {
+
+	using namespace boost::filesystem;
+	for(path p : boost::make_iterator_range(directory_iterator(folder), {})) {
+		if (!is_regular_file(p)) continue;
+
+		auto name = p.filename().string();
 		std::smatch match;
-		if (std::regex_search(file, match, re) && match.size() == 3) {
+		if (std::regex_search(name, match, re) && match.size() == 3) {
 			auto version = std::stoi(match[2]);
 			if (0 <= version && version <= std::numeric_limits<uint16_t>::max()) {
 				try {
-					out.emplace_back(elements::config::load(folder + "/" + file, static_cast<uint16_t>(version)));
+					out.emplace_back(elements::config::load(p.string(), static_cast<uint16_t>(version)));
 				}
 				catch (std::exception& e) {
 					std::cerr << e.what() << std::endl;
@@ -674,6 +670,7 @@ std::vector<config::ptr> config::load_folder(std::string folder) {
 			}
 		}
 	}
+
 	return out;
 }
 

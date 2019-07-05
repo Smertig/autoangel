@@ -16,7 +16,7 @@ end
 -- returns item list
 function generate_item_from_monster(edata, id)
     local mon
-    for _, monster in pairs(edata[38 + 1]) do
+    for _, monster in pairs(edata[38]) do
         if monster.ID == id then
             mon = monster
             break
