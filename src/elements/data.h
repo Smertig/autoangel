@@ -94,8 +94,14 @@ public:
 
 	uint16_t version() const { return _version; }
 
-	data_list::ptr operator[](std::size_t list) { return _lists[list]; }
-	data_list::ptr at(std::size_t list) { return _lists.at(list); }
+	data_list::ptr get_list(data_type list) {
+		return _lists.at(static_cast<int>(list) - 1); // first list has index = 1
+	}
+
+	data_list::ptr get_list(const std::string& name) {
+		return get_list(_config->get_dt_by_name(name));
+	}
+
 	std::size_t size() const { return _lists.size(); }
 	iterator begin() { return _lists.begin(); }
 	iterator end() { return _lists.end(); }

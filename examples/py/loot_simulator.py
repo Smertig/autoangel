@@ -15,7 +15,7 @@ def rand_select(l):
 
 # returns item list
 def generate_item_from_monster(edata, id: int):
-    mon = next(monster for monster in edata[38] if monster.ID == id)
+    mon = next(monster for monster in edata['MONSTER_ESSENCE'] if monster.ID == id)
 
     probability_drop_num = [getattr(mon, 'probability_drop_num{}'.format(i)) for i in range(4)]
     drop_matters_probability = [getattr(mon, 'drop_matters_{}_probability'.format(i + 1)) for i in range(32)]

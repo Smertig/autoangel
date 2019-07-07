@@ -611,9 +611,10 @@ std::shared_ptr<list_config> list_config::parse(std::istream& is) {
 	int idt = -1;
 	char sdt[256]{};
 	if (sscanf(config->caption.c_str(), "%d - %255s", &idt, sdt) != 2) {
-		throw std::runtime_error("elements::list_config::load: cannot parse data_type from caption ('" + config->caption + "')");
+		throw std::runtime_error(fmt::format("elements::list_config::load: cannot parse data_type from caption (list: {})", config->caption));
 	}
 	config->dt = static_cast<data_type>(idt);
+	config->sdt = sdt;
 	config->space = dt_to_space(config->dt);
 
 	return config;
@@ -635,15 +636,21 @@ config::ptr config::load(std::string path, uint16_t version) {
 
 		pconfig->_file_path = path;
 		pconfig->_version = version;
-		pconfig->_lists.reserve(list_count);
 		for (std::size_t i = 0; i < list_count; i++) {
-			pconfig->_lists.emplace_back(list_config::parse(ifs));
+			auto list = list_config::parse(ifs);
+
+			if (static_cast<int>(list->dt) != i + 1) {
+				throw std::runtime_error(fmt::format("expected dt = {}, but got {}", i + 1, static_cast<int>(list->dt)));
+			}
+
+			pconfig->_list_names[list->sdt] = list->dt;
+			pconfig->_lists.emplace_back(std::move(list));
 		}
 
 		return pconfig;
 	}
 	catch (std::exception& e) {
-		throw std::runtime_error("elements::config::load: cannot parse '" + path + "' (" + e.what() + ")");
+		throw std::runtime_error(fmt::format("elements::config::load: cannot parse '{}' ({})", path, e.what()));
 	}
 }
 
@@ -672,6 +679,14 @@ std::vector<config::ptr> config::load_folder(std::string folder) {
 	}
 
 	return out;
+}
+
+data_type config::get_dt_by_name(const std::string& name) const {
+	auto it = _list_names.find(name);
+	if (it == _list_names.end()) {
+		throw std::invalid_argument(fmt::format("no data_type with name '{}' in config v{} (path: '{}')", name, _version, _file_path));
+	}
+	return it->second;
 }
 
 }

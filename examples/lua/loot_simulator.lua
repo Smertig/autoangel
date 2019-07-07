@@ -16,12 +16,13 @@ end
 -- returns item list
 function generate_item_from_monster(edata, id)
     local mon
-    for _, monster in pairs(edata[38]) do
+    for _, monster in pairs(edata['MONSTER_ESSENCE']) do
         if monster.ID == id then
             mon = monster
             break
         end
     end
+    assert(mon, 'Моб ' .. id .. ' не найден')
 
     local probability_drop_num = {}
     for i = 1, 4 do

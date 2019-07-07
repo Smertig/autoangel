@@ -8,6 +8,7 @@
 #include <string>
 #include <memory>
 #include <istream>
+#include <unordered_map>
 
 #include <src/util/encoding.h>
 
@@ -153,6 +154,7 @@ struct list_config {
 	std::size_t offset;
 	std::string caption;
 	data_type dt;
+	std::string sdt;
 	space_id space;
 	std::vector<field_meta> fields;
 
@@ -165,6 +167,7 @@ class config {
 	std::string _file_path;
 	uint16_t _version;
 	std::vector<std::shared_ptr<list_config>> _lists;
+	std::unordered_map<std::string, data_type> _list_names;
 
 public:
 	using value_type = decltype(_lists)::value_type;
@@ -176,12 +179,14 @@ public:
 	static config::ptr load(std::string path, uint16_t version);
 	static std::vector<config::ptr> load_folder(std::string folder);
 
-	std::shared_ptr<list_config> operator[](std::size_t list) {
-		return _lists[list];
+	data_type get_dt_by_name(const std::string& name) const;
+
+	list_config::ptr get_list(data_type list) {
+		return _lists.at(static_cast<int>(list) - 1); // first list has index = 1
 	}
 
-	std::shared_ptr<list_config> at(std::size_t list) {
-		return _lists.at(list);
+	list_config::ptr get_list(const std::string& name) {
+		return get_list(get_dt_by_name(name));
 	}
 
 	const auto& get_lists() const {

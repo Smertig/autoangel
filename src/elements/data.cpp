@@ -42,14 +42,14 @@ void data::parse(std::ifstream& ifs, const std::vector<config::ptr>& confs) {
 				return list->offset;
 			}
 			else {
-				if (list->caption == "021 - SKILLTOME_SUB_TYPE") {
+				if (list->sdt == "SKILLTOME_SUB_TYPE") {
 					uint32_t tag{}, len{};
 					read_some(tag);
 					read_some(len);
 					ifs.seekg(-8, ifs.cur);
 					return 8 + len + 4;
 				}
-				else if (list->caption == "101 - NPC_WAR_TOWERBUILD_SERVICE") {
+				else if (list->sdt == "NPC_WAR_TOWERBUILD_SERVICE") {
 					uint32_t tag{}, len{};
 					read_some(tag);
 					read_some(len);
@@ -57,7 +57,7 @@ void data::parse(std::ifstream& ifs, const std::vector<config::ptr>& confs) {
 					return 8 + len;
 				}
 				else {
-					throw std::runtime_error("unknown structure of '" + list->caption + "' prefix");
+					throw std::runtime_error(fmt::format("unknown structure of '{}' prefix", list->caption));
 				}
 			}
 		}();

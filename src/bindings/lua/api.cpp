@@ -7,6 +7,8 @@
 
 #include <sol.hpp>
 
+#include <iostream>
+
 sol::object get(const elements::field_value& self, sol::this_state L) {
 	sol::object result;
 	self.get([&](const auto& value) {
@@ -120,10 +122,22 @@ void init(sol::state_view lua_state) {
 				{ "config", space_id::config },
 		});
 
+		auto config_generic_get = [](config* self, auto key, sol::this_state L) -> list_config::ptr {
+			try {
+				return self->get_list(key);
+			}
+			catch (std::exception& e) {
+				std::cerr << "error: " << e.what() << "\n";
+				return nullptr;
+			}
+		};
 		elements.new_usertype<config>("elements::config",
 				"version", sol::readonly_property(&config::version),
 				//"lists", sol::property(&config::get_lists),
-				sol::meta_function::index, [](config& conf, std::size_t idx) -> decltype(auto) { return conf.at(idx); }
+				sol::meta_function::index, sol::overload(
+					static_cast<list_config::ptr(*)(config*, data_type, sol::this_state)>(config_generic_get),
+					static_cast<list_config::ptr(*)(config*, const std::string&, sol::this_state)>(config_generic_get)
+				)
 		);
 
 		elements.new_usertype<list_config>("elements::list_config",
@@ -132,6 +146,15 @@ void init(sol::state_view lua_state) {
 				"fields", sol::readonly(&list_config::fields)*/
 		);
 
+		auto data_generic_get = [](data* self, auto key, sol::this_state L) -> data_list::ptr {
+			try {
+				return self->get_list(key);
+			}
+			catch (std::exception& e) {
+				std::cerr << "error: " << e.what() << "\n";
+				return nullptr;
+			}
+		};
 		elements.new_usertype<data>("data",
 				sol::call_constructor, sol::constructor_list<data(const char*)>(),
 				"version", sol::readonly_property(&data::version),
@@ -139,7 +162,10 @@ void init(sol::state_view lua_state) {
 						static_cast<void(data::*)(config::ptr)>(&data::load),
 						static_cast<void(data::*)(const std::vector<config::ptr>&)>(&data::load)
 				),
-				sol::meta_function::index, [](data& data, std::size_t idx) -> decltype(auto) { return data.at(idx); },
+				sol::meta_function::index, sol::overload(
+						static_cast<data_list::ptr(*)(data*, data_type, sol::this_state)>(data_generic_get),
+						static_cast<data_list::ptr(*)(data*, const std::string&, sol::this_state)>(data_generic_get)
+				),
 				"save", &data::save
 		);
 
