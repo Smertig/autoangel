@@ -125,4 +125,4 @@ elements.data version is 12
 - [ ] More examples
 - [ ] Dependency installation guide
 - [ ] Installation
-- [ ] Make separate `autoangel.a` and link it to lua/python implementations
+- [+] Make separate `autoangel.a` and link it to lua/python implementations
