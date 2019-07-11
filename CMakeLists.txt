@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.1)
 project(autoangel)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -6,22 +6,31 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-find_package(Lua53)
-find_package(ZLIB REQUIRED)
-find_package(Boost REQUIRED COMPONENTS system filesystem)
+include(${CMAKE_MODULE_PATH}/conan.cmake)
 
-# variant for C++14
-add_subdirectory(external/variant)
-link_libraries(mpark_variant)
-include_directories(external/variant/include)
+conan_check()
+conan_add_remote(NAME bincrafters URL https://api.bintray.com/conan/bincrafters/public-conan)
+conan_add_remote(NAME zimmerk URL https://api.bintray.com/conan/zimmerk/conan)
 
-# fmtlib
-add_subdirectory(external/fmt EXCLUDE_FROM_ALL)
-link_libraries(fmt)
+conan_cmake_run(
+    REQUIRES
+        zlib/1.2.11@conan/stable
+        boost/1.68.0@conan/stable
+        variant/1.3.0@bincrafters/stable
+        fmt/5.3.0@bincrafters/stable
+        sol2/2.20.4@zimmerk/stable
+        pybind11/2.3.0@conan/stable
+    OPTIONS
+        sol2:single_header=True
+    BASIC_SETUP
+    BUILD missing
+)
 
-# everything else
-include_directories(${CMAKE_SOURCE_DIR} ${ZLIB_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
-link_libraries(${ZLIB_LIBRARIES} ${Boost_LIBRARIES})
+find_package(pybind11)
+
+# everything
+include_directories(${CMAKE_SOURCE_DIR})
+link_libraries(${CONAN_LIBS})
 
 # autoangel core
 add_library(autoangel_core STATIC
@@ -31,21 +40,18 @@ add_library(autoangel_core STATIC
         src/util/encoding.cpp
 )
 
-if (${LUA53_FOUND})
-    add_subdirectory(external/sol2)
-    add_library(lua_autoangel SHARED
-            src/bindings/lua/api.cpp
-    )
-    set_target_properties(lua_autoangel PROPERTIES PREFIX "")
+### lua binding
+add_library(lua_autoangel SHARED
+        src/bindings/lua/api.cpp
+)
+set_target_properties(lua_autoangel PROPERTIES PREFIX "")
 
-    target_compile_definitions(lua_autoangel PRIVATE SOL_CHECK_ARGUMENTS=1)
-    target_include_directories(lua_autoangel PRIVATE ${LUA53_INCLUDE_DIR})
-    target_link_libraries(lua_autoangel PRIVATE autoangel_core ${LUA53_LIBRARIES} sol2)
+target_compile_definitions(lua_autoangel PRIVATE SOL_CHECK_ARGUMENTS=1)
+target_link_libraries(lua_autoangel PRIVATE autoangel_core)
 
-    add_custom_command(TARGET lua_autoangel POST_BUILD COMMAND cp $<TARGET_FILE:lua_autoangel> ${CMAKE_SOURCE_DIR}/examples/lua/autoangel.so)
-endif()
+add_custom_command(TARGET lua_autoangel POST_BUILD COMMAND cp $<TARGET_FILE:lua_autoangel> ${CMAKE_SOURCE_DIR}/examples/lua/autoangel.so)
 
-add_subdirectory(external/pybind11)
+### python binding
 pybind11_add_module(py_autoangel
         src/bindings/py/api.cpp
 )

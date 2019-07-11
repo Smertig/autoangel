@@ -9,9 +9,7 @@
 
 ## Dependencies & Requirements
 - C++14 compiler (gcc 4.9+, clang 3.6+ or VS 2015+).
-- [`Boost`](https://www.boost.org/)
-- zlib
-- Lua5.3 (optional)
+- [`Conan`](https://conan.io/downloads.html)
 - Python
 - CMake 3.1+
 
@@ -123,6 +121,5 @@ elements.data version is 12
 - [ ] lua API docs
 - [ ] pck.package for `lua`
 - [ ] More examples
-- [ ] Dependency installation guide
 - [ ] Installation
 - [+] Make separate `autoangel.a` and link it to lua/python implementations
