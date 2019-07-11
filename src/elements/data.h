@@ -50,7 +50,7 @@ struct data_value {
 
 	using ptr = std::shared_ptr<data_value>;
 
-	using value_type = storage_t::value_type;
+	//using value_type = storage_t::value_type;
 	using iterator = storage_t::const_iterator;
 	using const_iterator = storage_t::const_iterator;
 	using size_type = storage_t::size_type;
