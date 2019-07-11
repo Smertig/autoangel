@@ -71,6 +71,22 @@ void data_value_setter(elements::data_value& data, const char* field, py::object
 	}
 }
 
+py::iterator data_value_iter(elements::data_value& data) {
+	struct iter_t : elements::data_value::iterator {
+		using iterator = elements::data_value::iterator;
+
+		iter_t(iterator base) : iterator(base) {}
+
+		std::pair<std::string, py::object> operator*() const {
+			auto& p = iterator::operator*();
+			py::object obj;
+			p.second.get([&obj](const auto& value) { obj = py::cast(to_python(value)); });
+			return std::make_pair(p.first, std::move(obj));
+		}
+	};
+	return py::make_iterator(iter_t{ data.begin() }, iter_t{ data.end() });
+}
+
 PYBIND11_MODULE(autoangel, m) {
 	m.doc() = "AutoAngel module for elements.data editing";
 
@@ -135,6 +151,7 @@ PYBIND11_MODULE(autoangel, m) {
 		py::class_<data_value, data_value::ptr>(elements, "data_value")
 				.def("__getattr__", &data_value_getter)
 				.def("__setattr__", &data_value_setter)
+				.def("__iter__", &data_value_iter, py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
 				.def("clone", [](const data_value& rhs) -> data_value { return rhs.clone(); })
 				;
 	}

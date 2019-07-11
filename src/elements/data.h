@@ -36,7 +36,9 @@ struct field_value {
 };
 
 struct data_value {
-	std::map<std::string, field_value> value;
+	using storage_t = std::map<std::string, field_value>;
+
+	storage_t value;
 
 	friend inline bool operator==(const data_value& lhs, const data_value& rhs) {
 		return lhs.value == rhs.value;
@@ -47,6 +49,17 @@ struct data_value {
 	}
 
 	using ptr = std::shared_ptr<data_value>;
+
+	using value_type = storage_t::value_type;
+	using iterator = storage_t::const_iterator;
+	using const_iterator = storage_t::const_iterator;
+	using size_type = storage_t::size_type;
+
+	std::size_t size() const { return value.size(); }
+	iterator begin() { return value.begin(); }
+	iterator end() { return value.end(); }
+	const_iterator begin() const { return value.begin(); }
+	const_iterator end() const { return value.end(); }
 };
 
 struct data_list {
