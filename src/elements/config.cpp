@@ -13,6 +13,7 @@
 #include <limits>
 #include <regex>
 #include <map>
+#include <cctype>
 
 #include <boost/filesystem.hpp>
 #include <boost/range/iterator_range.hpp>

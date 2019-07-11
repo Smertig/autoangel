@@ -14,7 +14,7 @@
 namespace elements {
 
 class config;
-struct meta_type;
+class meta_type;
 
 struct field_value {
 	meta_type* vtable = nullptr;

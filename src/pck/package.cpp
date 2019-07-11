@@ -11,6 +11,7 @@
 #include <cassert>
 #include <memory>
 #include <algorithm>
+#include <cwctype>
 #include <src/util/encoding.h>
 
 #include <fmt/format.h>

@@ -97,7 +97,7 @@ struct raw_meta_type {
 
 		auto size = is.tellg() - old_pos;
 		is.seekg(old_pos, std::istream::beg);
-		return size;
+		return static_cast<std::size_t>(size);
 	}
 
 	template <class F> // signature void(const T&)

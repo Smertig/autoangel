@@ -19,7 +19,8 @@ conan_cmake_run(
         variant/1.3.0@bincrafters/stable
         fmt/5.3.0@bincrafters/stable
         sol2/2.20.4@zimmerk/stable
-        pybind11/2.3.0@conan/stable
+        pybind11/2.3.0@conan/stable		
+		libiconv/1.15@bincrafters/stable
     OPTIONS
         sol2:single_header=True
     BASIC_SETUP
@@ -48,12 +49,17 @@ set_target_properties(lua_autoangel PROPERTIES PREFIX "")
 
 target_compile_definitions(lua_autoangel PRIVATE SOL_CHECK_ARGUMENTS=1)
 target_link_libraries(lua_autoangel PRIVATE autoangel_core)
-
-add_custom_command(TARGET lua_autoangel POST_BUILD COMMAND cp $<TARGET_FILE:lua_autoangel> ${CMAKE_SOURCE_DIR}/examples/lua/autoangel.so)
+add_custom_command(TARGET lua_autoangel POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:lua_autoangel> ${CMAKE_SOURCE_DIR}/examples/lua/autoangel.so)
 
 ### python binding
+if (WIN32)
+	set(PY_MODULE_EXT "pyd")
+else()
+	set(PY_MODULE_EXT "so")
+endif()
+
 pybind11_add_module(py_autoangel
         src/bindings/py/api.cpp
 )
-target_link_libraries(py_autoangel PRIVATE autoangel_core)
-add_custom_command(TARGET py_autoangel POST_BUILD COMMAND cp $<TARGET_FILE:py_autoangel> ${CMAKE_SOURCE_DIR}/examples/py/autoangel.so)
+target_link_libraries(py_autoangel PRIVATE autoangel_core)	
+add_custom_command(TARGET py_autoangel POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:py_autoangel> ${CMAKE_SOURCE_DIR}/examples/py/autoangel.${PY_MODULE_EXT})

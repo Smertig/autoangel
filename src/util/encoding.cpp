@@ -4,11 +4,7 @@
 
 #include "encoding.h"
 
-#include <codecvt>
-#include <locale>
-#include <iconv.h>
 #include <cstring>
-
 #include <external/iconv.hpp>
 
 template <class Char>
@@ -36,7 +32,7 @@ std::string utf8_to_gbk(const std::string& input) {
 	return output;
 }
 
-std::string unicode_to_utf8(const std::u16string& input) {
+std::string unicode_to_utf8(const std::u16string& input) {	
 	static const iconvpp::converter conv{ "UTF-8", "UTF-16LE", true };
 
 	std::string input8(input.length() * 2, '\0');
@@ -47,7 +43,7 @@ std::string unicode_to_utf8(const std::u16string& input) {
 	return output;
 }
 
-std::u16string utf8_to_unicode(const std::string& input) {
+std::u16string utf8_to_unicode(const std::string& input) {		
 	static const iconvpp::converter conv{ "UTF-16LE", "UTF-8", true };
 
 	std::string output;
@@ -66,7 +62,7 @@ std::u16string gbk_to_unicode(const std::string& input) {
 	return std::u16string{ p, p + output.size() / 2 };
 }
 
-std::string unicode_to_gbk(const std::u16string& input) {
+std::string unicode_to_gbk(const std::u16string& input) {	
 	static const iconvpp::converter conv{ "GBK", "UTF-16LE", true };
 
 	std::string input8(input.length() * 2, '\0');
