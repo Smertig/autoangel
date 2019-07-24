@@ -8,7 +8,7 @@
 ---
 
 ## Dependencies & Requirements
-- C++14 compiler (gcc 4.9+, clang 3.6+ or VS 2015+).
+- C++14 compiler (tested on gcc 4.9.2+, VS 2017+).
 - [`Conan`](https://conan.io/downloads.html)
 - Python
 - CMake 3.1+
@@ -18,7 +18,7 @@
 ## Build
 ```sh
 cd /folder/with/your/projects
-git clone --recursive https://github.com/Smertig/autoangel
+git clone https://github.com/Smertig/autoangel
 cd autoangel
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
@@ -122,4 +122,4 @@ elements.data version is 12
 - [ ] pck.package for `lua`
 - [ ] More examples
 - [ ] Installation
-- [+] Make separate `autoangel.a` and link it to lua/python implementations
+- [x] Make separate `autoangel.a` and link it to lua/python implementations

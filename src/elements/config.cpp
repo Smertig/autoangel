@@ -621,7 +621,7 @@ std::shared_ptr<list_config> list_config::parse(std::istream& is) {
 	return config;
 }
 
-config::ptr config::load(std::string path, uint16_t version) {
+config::ptr config::load(const std::string& path, uint16_t version) {
 	try {
 		std::ifstream ifs;
 		ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);

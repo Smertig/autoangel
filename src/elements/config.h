@@ -176,7 +176,7 @@ public:
 
 	using ptr = std::shared_ptr<config>;
 
-	static config::ptr load(std::string path, uint16_t version);
+	static config::ptr load(const std::string& path, uint16_t version);
 	static std::vector<config::ptr> load_folder(std::string folder);
 
 	data_type get_dt_by_name(const std::string& name) const;

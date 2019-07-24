@@ -45,7 +45,7 @@ struct data_value {
 	}
 
 	data_value clone() const {
-		return data_value{ *this };
+		return *this;
 	}
 
 	using ptr = std::shared_ptr<data_value>;

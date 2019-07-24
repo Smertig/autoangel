@@ -73,7 +73,7 @@ package::package(std::string path_) : path(std::move(path_)) {
 }
 
 void package::load() {
-	ifs = std::ifstream(path, std::ifstream::binary);
+	ifs.open(path, std::ifstream::binary);
 
 	if (!ifs) {
 		throw std::runtime_error(fmt::format("failed to open '{}'", path));

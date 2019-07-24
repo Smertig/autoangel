@@ -108,8 +108,8 @@ PYBIND11_MODULE(autoangel, m) {
 				;
 
 		py::class_<config, config::ptr>(elements, "config")
-				.def("__getitem__", py::overload_cast<data_type>(&config::get_list))
-				.def("__getitem__", py::overload_cast<const std::string&>(&config::get_list))
+		        .def("__getitem__", static_cast<list_config::ptr(config::*)(data_type)>(&config::get_list))
+				.def("__getitem__", static_cast<list_config::ptr(config::*)(const std::string&)>(&config::get_list))
 				.def("__iter__", [](const config& self) { return py::make_iterator(self); }, py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
 				.def_property_readonly("version", &config::version)
 				;
@@ -133,12 +133,12 @@ PYBIND11_MODULE(autoangel, m) {
 		py::class_<data, data::ptr>(elements, "data")
 		        .def(py::init<const char*>())
 		        .def_property_readonly("version", &data::version)
-		        .def("load", py::overload_cast<config::ptr>(&data::load), "Loads elements.data")
-		        .def("load", py::overload_cast<const std::vector<config::ptr>&>(&data::load), "Loads elements.data")
-				.def("__getitem__", py::overload_cast<data_type>(&data::get_list))
-				.def("__getitem__", py::overload_cast<const std::string&>(&data::get_list))
-				.def("__iter__", [](const data& self) { return py::make_iterator(self); }, py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
-				.def("save", &data::save, py::arg("path") = nullptr)
+		        .def("load", static_cast<void(data::*)(config::ptr)>(&data::load), "Loads elements.data")
+		        .def("load", static_cast<void(data::*)(const std::vector<config::ptr>&)>(&data::load), "Loads elements.data")
+		        .def("__getitem__", static_cast<data_list::ptr(data::*)(data_type)>(&data::get_list))
+		        .def("__getitem__", static_cast<data_list::ptr(data::*)(const std::string&)>(&data::get_list))
+		        .def("__iter__", [](const data& self) { return py::make_iterator(self); }, py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
+		        .def("save", &data::save, py::arg("path") = nullptr)
 				;
 
 		py::class_<data_list, data_list::ptr>(elements, "data_list")
