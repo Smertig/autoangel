@@ -145,6 +145,7 @@ PYBIND11_MODULE(autoangel, m) {
 				.def("__getitem__", [](data_list& self, std::size_t index) { return self.at(index); })
 				.def_readonly("type", &data_list::type)
 				.def_readonly("space", &data_list::space)
+				.def_readonly("caption", &data_list::caption)
 				.def("append", [](data_list& self, data_value::ptr ptr) { self.storage.emplace_back(std::move(ptr)); })
 				;
 

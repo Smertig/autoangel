@@ -72,6 +72,7 @@ void data::parse(std::ifstream& ifs, const std::vector<config::ptr>& confs) {
 
 		values_list.type = list->dt;
 		values_list.space = list->space;
+		values_list.caption = list->caption;
 		values_list.prefix = std::move(prefix);
 		values_list.storage.reserve(length);
 

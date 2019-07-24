@@ -52,7 +52,7 @@ def calc_diff(edata1, edata2):
 
         total_str = only1_str + only2_str + common_str
         if len(total_str) > 0:
-            output += '<- List #{} ->\n'.format(int(list1.type))
+            output += '<- List #{} ->\n'.format(list1.caption)
             output += total_str
 
     return output

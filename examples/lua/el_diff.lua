@@ -4,7 +4,7 @@ require 'autoangel'
 
 function analyse_sets(s1, s2, cb_1, cb_2, cb, proj)
     local i, j = 1, 1
-    while i < #s1 and j < #s2 do
+    while i <= #s1 and j <= #s2 do
         local a, b = s1[i], s2[j]
         local ida, idb = proj(a), proj(b)
         if ida < idb then
@@ -20,12 +20,12 @@ function analyse_sets(s1, s2, cb_1, cb_2, cb, proj)
         end
     end
 
-    while i < #s1 do
+    while i <= #s1 do
         cb_1(s1[i])
         i = i + 1
     end
 
-    while j < #s2 do
+    while j <= #s2 do
         cb_2(s2[j])
         j = j + 1
     end
@@ -96,7 +96,7 @@ function calc_diff(edata1, edata2)
 
             total_str = only1_str .. only2_str .. common_str
             if #total_str > 0 then
-                output = output .. string.format('<- List #%d ->\n', tonumber(list1.type)) .. total_str
+                output = output .. string.format('<- List #%s ->\n', list1.caption) .. total_str
             end
         end
     end

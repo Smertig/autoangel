@@ -141,8 +141,8 @@ void init(sol::state_view lua_state) {
 		);
 
 		elements.new_usertype<list_config>("elements::list_config",
-				"offset", &list_config::offset,
-				"caption", &list_config::caption/*,
+				"offset", sol::readonly(&list_config::offset),
+				"caption", sol::readonly(&list_config::caption)/*,
 				"fields", sol::readonly(&list_config::fields)*/
 		);
 
@@ -171,7 +171,8 @@ void init(sol::state_view lua_state) {
 
 		elements.new_usertype<data_list>("data_list",
 				"type", sol::readonly(&data_list::type),
-				"space", sol::readonly(&data_list::space)
+				"space", sol::readonly(&data_list::space),
+				"caption", sol::readonly(&data_list::caption)
 		);
 
 		elements.new_usertype<data_value>("data_value",

@@ -70,6 +70,7 @@ struct data_list {
 	storage_t storage;
 	data_type type;
 	space_id space;
+	std::string caption;
 	std::vector<char> prefix;
 
 	using value_type = storage_t::value_type;
