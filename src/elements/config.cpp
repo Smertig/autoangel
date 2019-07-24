@@ -600,15 +600,24 @@ std::shared_ptr<list_config> list_config::parse(std::istream& is) {
 		config->fields.emplace_back(std::move(field_name), meta_type::parse(field_type));
 	}
 
+	constexpr const auto STRING_OUTPUT_LIMIT = 128;
+	auto make_short_str = [](std::string s) {
+		if (s.length() >= STRING_OUTPUT_LIMIT) {
+			s.resize(STRING_OUTPUT_LIMIT);
+			s.append("... (truncated)");
+		}
+		return s;
+	};
+
 	if (!sfield_names.eof()) {
 		throw std::runtime_error(fmt::format("elements::list_config::load: cannot parse all field names from '{}' (list: {})",
-				field_names, config->caption
+				make_short_str(field_names), config->caption
 		));
 	}
 
 	if (!sfield_types.eof()) {
 		throw std::runtime_error(fmt::format("elements::list_config::load: cannot parse all field types from '{}' (list: {})",
-											 field_names, config->caption
+				make_short_str(field_names), config->caption
 		));
 	}
 
@@ -643,12 +652,23 @@ config::ptr config::load(const std::string& path, uint16_t version) {
 		for (std::size_t i = 0; i < list_count; i++) {
 			auto list = list_config::parse(ifs);
 
-			if (static_cast<int>(list->dt) != i + 1) {
-				throw std::runtime_error(fmt::format("expected dt = {}, but got {}", i + 1, static_cast<int>(list->dt)));
+			std::size_t list_index = static_cast<std::size_t>(list->dt) - 1;
+			if (list_index > 10'000) {
+				throw std::runtime_error(fmt::format("unexpected dt: {}", static_cast<int>(list->dt)));
 			}
 
 			pconfig->_list_names[list->sdt] = list->dt;
-			pconfig->_lists.emplace_back(std::move(list));
+			if (pconfig->_lists.size() <= list_index) {
+				pconfig->_lists.resize(list_index + 1);
+			}
+			pconfig->_lists[list_index] = std::move(list);
+		}
+
+		for (std::size_t i = 0; i < pconfig->_lists.size(); i++) {
+			if (!pconfig->_lists[i]) {
+				auto dt = i + 1;
+				throw std::runtime_error(fmt::format("missing list {:03d}", dt));
+			}
 		}
 
 		return pconfig;
