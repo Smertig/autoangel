@@ -114,6 +114,7 @@ struct raw_meta_type {
 class meta_type {
 	using storage_t = mpark::variant<
 	        fundamental_meta_type<int32_t>,
+			fundamental_meta_type<int64_t>,
 	        fundamental_meta_type<float>,
 	        string_meta_type<char>,
 	        string_meta_type<char16_t>,

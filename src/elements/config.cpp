@@ -535,6 +535,9 @@ meta_type meta_type::parse(const std::string& str) {
 	if (str == "int32") {
 		return fundamental_meta_type<int32_t>{};
 	}
+	else if (str == "int64") {
+		return fundamental_meta_type<int64_t>{};
+	}
 	else if (str == "float") {
 		return fundamental_meta_type<float>{};
 	}
