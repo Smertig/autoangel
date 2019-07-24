@@ -3,9 +3,10 @@
 from autoangel import *
 import sys
 
-def print_diff(edata1, edata2):
+def calc_diff(edata1, edata2):
     assert(edata1.version == edata2.version)
 
+    output = ''
     for list1, list2 in zip(edata1, edata2):
         if int(list1.type) == 59:
             continue
@@ -51,8 +52,10 @@ def print_diff(edata1, edata2):
 
         total_str = only1_str + only2_str + common_str
         if len(total_str) > 0:
-            print('<- List #{} ->'.format(int(list1.type)))
-            print(total_str, end='')
+            output += '<- List #{} ->\n'.format(int(list1.type))
+            output += total_str
+
+    return output
 
 
 if __name__ == "__main__":
@@ -68,5 +71,5 @@ if __name__ == "__main__":
     edata1.load(conf)
     edata2.load(conf)
 
-    print_diff(edata1, edata2)
+    print(calc_diff(edata1, edata2))
 

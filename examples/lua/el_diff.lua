@@ -39,9 +39,10 @@ function format_value(val)
     end
 end
 
-function print_diff(edata1, edata2)
+function calc_diff(edata1, edata2)
     assert(edata1.version == edata2.version)
 
+    local output = ''
     for _, list1 in pairs(edata1) do
         local list2 = edata2[list1.type]
 
@@ -95,11 +96,12 @@ function print_diff(edata1, edata2)
 
             total_str = only1_str .. only2_str .. common_str
             if #total_str > 0 then
-                print(string.format('<- List #%d ->', tonumber(list1.type)))
-                io.write(total_str) -- no newline
+                output = output .. string.format('<- List #%d ->\n', tonumber(list1.type)) .. total_str
             end
         end
     end
+
+    return output
 end
 
 function main()
@@ -116,7 +118,7 @@ function main()
     edata1:load(conf)
     edata2:load(conf)
 
-    print_diff(edata1, edata2)
+    print(calc_diff(edata1, edata2))
 end
 
 main()
