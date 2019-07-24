@@ -189,6 +189,11 @@ std::vector<uint8_t> package::read(std::u16string path) {
 	auto compressed = std::vector<uint8_t>(it->compressed_size);
 	read_some(ifs, compressed.data(), compressed.size());
 
+	if (it->compressed_size >= it->size) {
+		// already decompressed
+		return compressed;
+	}
+
 	auto decompressed = std::vector<uint8_t>(it->size);
 	std::size_t output_size = decompressed.size();
 	decompress(compressed.data(), compressed.size(), decompressed.data(), &output_size);

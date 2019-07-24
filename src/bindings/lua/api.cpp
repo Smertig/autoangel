@@ -4,10 +4,12 @@
 
 #include <src/elements/config.h>
 #include <src/elements/data.h>
+#include <src/pck/package.h>
 
 #include <sol.hpp>
 
 #include <iostream>
+#include <boost/range/iterator_range.hpp>
 
 sol::object get(const elements::field_value& self, sol::this_state L) {
 	sol::object result;
@@ -104,10 +106,11 @@ auto data_value_pairs(elements::data_value& mt) {
 }
 
 void init(sol::state_view lua_state) {
-	using namespace elements;
+	lua_state.new_usertype<std::vector<uint8_t>>("std::vector<uint8_t>");
 
 	{
 		sol::table elements = lua_state["elements"] = lua_state.create_table_with();
+		using namespace elements;
 
 		elements["load_cfg"] = &config::load;
 		elements["load_cfgs"] = &config::load_folder;
@@ -185,6 +188,25 @@ void init(sol::state_view lua_state) {
 
 	{
 		sol::table pck = lua_state["pck"] = lua_state.create_table_with();
+		using namespace pck;
+
+		pck.new_usertype<package>("package",
+				sol::call_constructor, sol::constructor_list<package(std::string)>(),
+				"load", &package::load,
+				"read", &package::read,
+				"find_prefix", [](package& p, std::u16string prefix) {
+					auto rng = p.find_prefix(prefix);
+					using base_t = std::decay_t<decltype(rng.first)>;
+					struct iter_t : base_t {
+						iter_t(base_t b) : base_t(b) {}
+
+						const std::u16string& operator*() const {
+							return base_t::operator->()->filename;
+						}
+					};
+					return boost::make_iterator_range(iter_t{ rng.first }, iter_t{ rng.second });
+				}
+		);
 	}
 }
 

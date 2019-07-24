@@ -56,8 +56,8 @@ Read pck package
 from autoangel import *
 surf = pck.package('/path/to/surfaces.pck')
 surf.load()
-for e in surf.find_prefix('surfaces/iconset'):
-    print('{} -> {} bytes'.format(e, len(surf.read(e))))
+for path in surf.find_prefix('surfaces/iconset'):
+    print('{} -> {} bytes'.format(path, len(surf.read(path))))
 ```
 
 Output:
@@ -115,11 +115,45 @@ elements.data version is 12
 [292] Инструменты мистика
 ```
 
+Read pck package
+```lua
+require 'autoangel'
+surf = pck.package('/path/to/surfaces.pck')
+surf:load()
+for _, path in pairs(surf:find_prefix('surfaces/iconset')) do
+    print(string.format('%s -> %d bytes', path, #surf:read(path)))    
+end
+```
+
+Output:
+```
+surfaces\iconset\iconlist_action.dds -> 32896 bytes
+surfaces\iconset\iconlist_action.txt -> 565 bytes
+surfaces\iconset\iconlist_faction.dds -> 8320 bytes
+surfaces\iconset\iconlist_faction.txt -> 954 bytes
+surfaces\iconset\iconlist_guild.dds -> 2097280 bytes
+surfaces\iconset\iconlist_guild.txt -> 720 bytes
+surfaces\iconset\iconlist_ivtrf.dds -> 16777344 bytes
+surfaces\iconset\iconlist_ivtrf.txt -> 173300 bytes
+surfaces\iconset\iconlist_ivtrm.dds -> 16777344 bytes
+surfaces\iconset\iconlist_ivtrm.txt -> 173400 bytes
+surfaces\iconset\iconlist_pet.dds -> 131200 bytes
+surfaces\iconset\iconlist_pet.txt -> 1301 bytes
+surfaces\iconset\iconlist_skill.dds -> 524416 bytes
+surfaces\iconset\iconlist_skill.txt -> 7878 bytes
+surfaces\iconset\iconlist_skillgrp.dds -> 32896 bytes
+surfaces\iconset\iconlist_skillgrp.txt -> 602 bytes
+surfaces\iconset\iconlist_state.dds -> 32896 bytes
+surfaces\iconset\iconlist_state.txt -> 1632 bytes
+```
+
 ## TODO
 - [ ] Fill TODO list
 - [ ] Python API docs
 - [ ] lua API docs
-- [ ] pck.package for `lua`
+- [x] pck.package for `lua`
 - [ ] More examples
 - [ ] Installation
 - [x] Make separate `autoangel.a` and link it to lua/python implementations
+- [ ] pkx support
+- [ ] Performance: mapped file
