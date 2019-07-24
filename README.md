@@ -1,4 +1,5 @@
-# AutoAngel
+![AutoAngel](https://i.imgur.com/Aekz7zn.png)
+
 **autoangel** - open-source C++ library (with [`lua`](https://www.lua.org/) and [`Python`](https://www.python.org/) bindings) that simplifies working with various Angelica3D file formats. Now it supports only `elements.data` (using sELedit config files) and `*.pck` packages.
 
 ---
