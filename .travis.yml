@@ -20,6 +20,7 @@ matrix:
   include:
     # works on Precise and Trusty
     - os: linux
+      dist: trusty
       addons:
         apt:
           sources:
@@ -31,6 +32,7 @@ matrix:
 
     # works on Precise and Trusty
     - os: linux
+      dist: xenial
       addons:
         apt:
           sources:
@@ -42,6 +44,7 @@ matrix:
 
     # works on Precise and Trusty
     - os: linux
+      dist: xenial
       addons:
         apt:
           sources:
@@ -55,6 +58,7 @@ before_install:
   - eval "${MATRIX_EVAL}"
     
 install:
+  - pyenv install 3.6.0
   - pyenv global 3.6
   - pip install --user conan
   - conan profile new default --detect
