@@ -1,5 +1,7 @@
 ![AutoAngel](https://i.imgur.com/Aekz7zn.png)
 
+[![Build Status](https://travis-ci.org/Smertig/autoangel.svg?branch=master)](https://travis-ci.org/Smertig/autoangel)
+
 **autoangel** - open-source C++ library (with [`lua`](https://www.lua.org/) and [`Python`](https://www.python.org/) bindings) that simplifies working with various Angelica3D file formats. Now it supports only `elements.data` (using sELedit config files) and `*.pck` packages.
 
 ---
@@ -9,7 +11,7 @@
 ---
 
 ## Dependencies & Requirements
-- C++14 compiler (tested on gcc 4.9.2+, VS 2017+).
+- C++14 compiler (tested on gcc-4.9.2, gcc-5, gcc-7, VS 2017+).
 - [`Conan`](https://conan.io/downloads.html)
 - Python
 - CMake 3.1+
