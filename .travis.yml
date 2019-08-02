@@ -57,7 +57,8 @@ before_install:
 install:
   - pyenv global 3.6
   - pip install --user conan
-  - conan profile update settings.compiler.libcxx=libstdc++11 default
+  - conan profile new default --detect
+  - conan profile update settings.compiler.libcxx=libstdc++11
   
 script:
   - mkdir build
