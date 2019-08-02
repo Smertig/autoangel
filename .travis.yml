@@ -58,8 +58,8 @@ before_install:
   - eval "${MATRIX_EVAL}"
     
 install:
-  - pyenv global 3.6.5 || pyenv install 3.6.5
-  - pyenv global 3.6.5
+  - pyenv install 3.5.0
+  - pyenv global 3.5.0
   - pip install --user conan
   - conan profile new default --detect
   - conan profile update settings.compiler.libcxx=libstdc++11 default
