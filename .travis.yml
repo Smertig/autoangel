@@ -12,9 +12,9 @@ compiler:
   - gcc
 #  - clang
 
-env:
-  - BUILD_CONFIGURATION=Debug
-  - BUILD_CONFIGURATION=Release
+#env:
+#  - BUILD_CONFIGURATION=Debug
+#  - BUILD_CONFIGURATION=Release
     
 matrix:
   include:
@@ -61,5 +61,5 @@ install:
 script:
   - mkdir build
   - cd build
-  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION
+  - cmake .. -DCMAKE_BUILD_TYPE=Release
   - cmake --build .
