@@ -23,7 +23,7 @@ addons:
             - python3-pip
         
 install:
-    - pip3 install --user setuptools
+    - pip3 install --user -U setuptools
     - pip3 install --user conan
   
 script:
