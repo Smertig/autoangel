@@ -1,0 +1,23 @@
+dist:     trusty
+sudo:     required
+
+language: cpp       
+                    
+
+os:
+    - linux
+    - osx
+
+compiler:
+    - gcc
+    - clang
+
+env:
+    - BUILD_CONFIGURATION=Debug
+    - BUILD_CONFIGURATION=Release
+
+script:
+    - mkdir build
+    - cd build
+    - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION
+    - cmake --build .
