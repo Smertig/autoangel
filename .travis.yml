@@ -23,6 +23,7 @@ addons:
             - python3-pip
         
 install:
+    - pyenv global 3.6
     - pip3 install --user -U setuptools
     - pip3 install --user conan
   
