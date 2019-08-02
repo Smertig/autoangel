@@ -6,50 +6,23 @@ language: cpp
 
 os:
   - linux
-#  - osx
 
 compiler:
   - gcc
-#  - clang
 
-#env:
-#  - BUILD_CONFIGURATION=Debug
-#  - BUILD_CONFIGURATION=Release
-    
-matrix:
-  include:
-    # works on Precise and Trusty
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-4.9
-      env:
-         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+env:
+  - BUILD_CONFIGURATION=Debug
+  - BUILD_CONFIGURATION=Release
 
-    # works on Precise and Trusty
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
-
-    # works on Precise and Trusty
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
-      env:
-        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+os: linux
+  addons:
+    apt:
+      sources:
+        - ubuntu-toolchain-r-test
+      packages:
+        - g++-4.9
+  env:
+     - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
 
 before_install:
   - eval "${MATRIX_EVAL}"
@@ -58,10 +31,10 @@ install:
   - pyenv global 3.6
   - pip install --user conan
   - conan profile new default --detect
-  - conan profile update settings.compiler.libcxx=libstdc++11
+  - conan profile update settings.compiler.libcxx=libstdc++11 default
   
 script:
   - mkdir build
   - cd build
-  - cmake .. -DCMAKE_BUILD_TYPE=Release
+  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION
   - cmake --build .
