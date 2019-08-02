@@ -16,16 +16,16 @@ env:
     - BUILD_CONFIGURATION=Debug
     - BUILD_CONFIGURATION=Release
 
-addons:
-    apt:
-        packages:
-            - python3
-            - python3-pip
+#addons:
+#    apt:
+#        packages:
+#            - python3
+#            - python3-pip
         
 install:
     - pyenv global 3.6
-    - pip3 install --user -U setuptools
-    - pip3 install --user conan
+#    - pip install --user -U setuptools
+    - pip install --user conan
   
 script:
     - mkdir build
