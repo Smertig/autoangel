@@ -5,30 +5,61 @@ language: cpp
                     
 
 os:
-    - linux
-    - osx
+  - linux
+#  - osx
 
 compiler:
-    - gcc
-    - clang
+  - gcc
+#  - clang
 
 env:
-    - BUILD_CONFIGURATION=Debug
-    - BUILD_CONFIGURATION=Release
+  - BUILD_CONFIGURATION=Debug
+  - BUILD_CONFIGURATION=Release
+    
+matrix:
+  include:
+    # works on Precise and Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+      env:
+         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
 
-#addons:
-#    apt:
-#        packages:
-#            - python3
-#            - python3-pip
-        
+    # works on Precise and Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+      env:
+         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+
+    # works on Precise and Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+
+before_install:
+  - eval "${MATRIX_EVAL}"
+    
 install:
-    - pyenv global 3.6
-#    - pip install --user -U setuptools
-    - pip install --user conan
+  - pyenv global 3.6
+  - pip install --user conan
   
 script:
-    - mkdir build
-    - cd build
-    - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION
-    - cmake --build .
+  - mkdir build
+  - cd build
+  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION
+  - cmake --build .
