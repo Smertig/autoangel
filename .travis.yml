@@ -16,6 +16,9 @@ env:
     - BUILD_CONFIGURATION=Debug
     - BUILD_CONFIGURATION=Release
 
+install:
+    - pip3 install conan
+  
 script:
     - mkdir build
     - cd build
