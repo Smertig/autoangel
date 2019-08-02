@@ -30,29 +30,11 @@ matrix:
       env:
          - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
 
-    # works on Precise and Trusty
     - os: linux
       dist: xenial
-#      addons:
-#        apt:
-#          sources:
-#            - ubuntu-toolchain-r-test
-#          packages:
-#            - g++-5
-#      env:
-#         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
 
-    # works on Precise and Trusty
     - os: linux
       dist: bionic
-#      addons:
-#        apt:
-#          sources:
-#            - ubuntu-toolchain-r-test
-#          packages:
-#            - g++-6
-#      env:
-#        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
 
 before_install:
   - eval "${MATRIX_EVAL}"
@@ -60,6 +42,7 @@ before_install:
 install:
   - pyenv global 3.6 || true # for trusty
   - pyenv global 3.7 || true # for xenial
+  - pyenv global 3.7.1 || true # for bionic
   - pip install --user conan
   - conan profile new default --detect
   - conan profile update settings.compiler.libcxx=libstdc++11 default
