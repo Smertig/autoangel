@@ -1,5 +1,5 @@
 dist:     trusty
-sudo:     required
+sudo:     false
 
 language: cpp       
                     
@@ -17,7 +17,7 @@ env:
     - BUILD_CONFIGURATION=Release
 
 install:
-    - pip3 install conan
+    - pip install --user conan
   
 script:
     - mkdir build
