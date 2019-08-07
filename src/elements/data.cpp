@@ -119,12 +119,14 @@ void data::load(const std::vector<std::shared_ptr<config>>& confs) {
 	this->parse(ifs, confs);
 }
 
-void data::save(const char* path) {
+void data::save(const char* path, config::ptr conf) {
 	if (!path) {
 		path = _path.c_str();
 	}
 
-	auto& conf = _config;
+	if (!conf) {
+		conf = _config;
+	}
 
 	std::ofstream ofs;
 	ofs.exceptions(std::ofstream::failbit | std::ofstream::badbit);
@@ -142,9 +144,13 @@ void data::save(const char* path) {
 	for (auto& list : conf->get_lists()) {
 		auto& values_list = *_lists[list_index++];
 
-		assert(list->offset == static_cast<std::size_t>(-1) || list->offset == values_list.prefix.size());
+		auto prefix = std::vector<char>{};
+		if (list->offset != static_cast<std::size_t>(-1)) {
+			prefix = values_list.prefix;
+			prefix.resize(list->offset); // if conf != _config
+		}
 
-		ofs.write(values_list.prefix.data(), values_list.prefix.size());
+		ofs.write(prefix.data(), prefix.size());
 
 		auto length = static_cast<uint32_t>(values_list.size());
 		write_some(length);

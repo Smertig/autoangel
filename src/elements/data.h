@@ -104,7 +104,7 @@ public:
 	explicit data(const char* path);
 	void load(config::ptr conf);
 	void load(const std::vector<config::ptr>& conf);
-	void save(const char* path = nullptr);
+	void save(const char* path = nullptr, config::ptr conf = nullptr);
 
 	uint16_t version() const { return _version; }
 

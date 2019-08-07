@@ -138,7 +138,7 @@ PYBIND11_MODULE(autoangel, m) {
 		        .def("__getitem__", static_cast<data_list::ptr(data::*)(data_type)>(&data::get_list))
 		        .def("__getitem__", static_cast<data_list::ptr(data::*)(const std::string&)>(&data::get_list))
 		        .def("__iter__", [](const data& self) { return py::make_iterator(self); }, py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
-		        .def("save", &data::save, py::arg("path") = nullptr)
+		        .def("save", &data::save, py::arg("path") = nullptr, py::arg("config") = nullptr)
 				;
 
 		py::class_<data_list, data_list::ptr>(elements, "data_list")
