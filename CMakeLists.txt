@@ -20,7 +20,7 @@ conan_cmake_run(
         fmt/5.3.0@bincrafters/stable
         sol2/2.20.4@zimmerk/stable
         pybind11/2.3.0@conan/stable		
-		libiconv/1.15@bincrafters/stable
+        libiconv/1.15@bincrafters/stable
     OPTIONS
         sol2:single_header=True
     BASIC_SETUP
@@ -63,3 +63,8 @@ pybind11_add_module(py_autoangel
 )
 target_link_libraries(py_autoangel PRIVATE autoangel_core)	
 add_custom_command(TARGET py_autoangel POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:py_autoangel> ${CMAKE_SOURCE_DIR}/examples/py/autoangel.${PY_MODULE_EXT})
+
+### examples
+
+add_executable(pck_dump examples/cpp/pck_dump.cpp)
+target_link_libraries(pck_dump PRIVATE autoangel_core dl)
