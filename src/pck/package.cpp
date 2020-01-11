@@ -8,7 +8,6 @@
 #include <sstream>
 #include <limits>
 #include <cstring>
-#include <cassert>
 #include <memory>
 #include <algorithm>
 #include <cwctype>
@@ -116,7 +115,7 @@ void package::load() {
 	);
 
 	bool pack_encrypted = (this->package_header.flags & 0x8000'0000) != 0;
-	assert(!pack_encrypted);
+	if (pack_encrypted) throw std::runtime_error("not implemented: encrypted package");
 
 	this->package_header.entry_offset ^= xor_keys[2];
 	if (this->package_header.guard0 != xor_keys[0]) throw std::runtime_error("invalid guard0");
@@ -147,7 +146,6 @@ void package::load() {
 		std::size_t entry_size = sizeof(file_gbk_entry_t);
 		if (entry_size == compressed_size) {
 			// assuming, it's compressed
-			assert(false);
 		}
 		else {
 			file_gbk_entry_t gbk_entry;
@@ -197,7 +195,10 @@ std::vector<uint8_t> package::read(std::u16string path) {
 	auto decompressed = std::vector<uint8_t>(it->size);
 	std::size_t output_size = decompressed.size();
 	decompress(compressed.data(), compressed.size(), decompressed.data(), &output_size);
-	assert(output_size == decompressed.size());
+
+	if (output_size != decompressed.size()) {
+		throw std::runtime_error(fmt::format("decompress(...) fails (expected output size: {}, got: {})", decompressed.size(), output_size));
+	}
 
 	return decompressed;
 }
