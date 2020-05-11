@@ -212,6 +212,9 @@ void init(sol::state_view lua_state) {
 
 extern "C" {
 
+#ifdef _WIN32
+__declspec(dllexport)
+#endif
 int luaopen_autoangel(lua_State* L){
 	init(sol::state_view{ L });
 	return 1;
