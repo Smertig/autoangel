@@ -20,12 +20,22 @@
 
 ## Build
 ```sh
+## download
 cd /folder/with/your/projects
 git clone https://github.com/Smertig/autoangel
 cd autoangel
+
+## configure
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
-cmake --build .
+
+## build
+# lua module
+cmake --build . --config Release --target lua_autoangel
+
+# python module
+cmake --build . --config Release --target py_autoangel
+
 ```
 
 ## Usage
