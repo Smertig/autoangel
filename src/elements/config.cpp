@@ -600,7 +600,7 @@ std::shared_ptr<list_config> list_config::parse(std::istream& is) {
 		config->fields.emplace_back(std::move(field_name), meta_type::parse(field_type));
 	}
 
-	constexpr const auto STRING_OUTPUT_LIMIT = 128;
+	static constexpr auto STRING_OUTPUT_LIMIT = 128;
 	auto make_short_str = [](std::string s) {
 		if (s.length() >= STRING_OUTPUT_LIMIT) {
 			s.resize(STRING_OUTPUT_LIMIT);
