@@ -14,9 +14,7 @@
 #include <regex>
 #include <map>
 #include <cctype>
-
-#include <boost/filesystem.hpp>
-#include <boost/range/iterator_range.hpp>
+#include <filesystem>
 
 #include <fmt/format.h>
 
@@ -683,8 +681,9 @@ std::vector<config::ptr> config::load_folder(std::string folder) {
 
     std::vector<elements::config::ptr> out;
 
-    using namespace boost::filesystem;
-    for(path p : boost::make_iterator_range(directory_iterator(folder), {})) {
+    namespace fs = std::filesystem;
+
+    for(const fs::path& p : fs::directory_iterator(folder)) {
         if (!is_regular_file(p)) continue;
 
         auto name = p.filename().string();

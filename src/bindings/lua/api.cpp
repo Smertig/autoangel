@@ -6,10 +6,9 @@
 #include <src/elements/data.h>
 #include <src/pck/package.h>
 
-#include <sol.hpp>
+#include <sol/sol.hpp>
 
 #include <iostream>
-#include <boost/range/iterator_range.hpp>
 
 sol::object get(const elements::field_value& self, sol::this_state L) {
     sol::object result;
@@ -196,15 +195,24 @@ void init(sol::state_view lua_state) {
                 "read", &package::read,
                 "find_prefix", [](package& p, std::u16string prefix) {
                     auto rng = p.find_prefix(prefix);
-                    using base_t = std::decay_t<decltype(rng.first)>;
-                    struct iter_t : base_t {
-                        iter_t(base_t b) : base_t(b) {}
+                    struct range_t {
+                        struct iter_t : decltype(rng.first) {
+                            const std::u16string& operator*() const {
+                                return (*this)->filename;
+                            }
+                        };
 
-                        const std::u16string& operator*() const {
-                            return base_t::operator->()->filename;
+                        decltype(rng) m_range;
+
+                        iter_t begin() const {
+                            return { m_range.first };
+                        }
+
+                        iter_t end() const {
+                            return { m_range.second };
                         }
                     };
-                    return boost::make_iterator_range(iter_t{ rng.first }, iter_t{ rng.second });
+                    return range_t{ rng };
                 }
         );
     }

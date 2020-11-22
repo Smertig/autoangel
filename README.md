@@ -11,7 +11,7 @@
 ---
 
 ## Dependencies & Requirements
-- C++14 compiler (tested on gcc-4.9.2, gcc-5, gcc-7, VS 2017+).
+- C++17 compiler
 - [`Conan`](https://conan.io/downloads.html)
 - Python
 - CMake 3.1+

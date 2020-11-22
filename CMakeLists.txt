@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 project(autoangel)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -10,6 +10,7 @@ include(${CMAKE_MODULE_PATH}/conan.cmake)
 
 conan_check()
 conan_add_remote(NAME conan-center URL https://conan.bintray.com)
+conan_add_remote(NAME bincrafters URL https://api.bintray.com/conan/bincrafters/public-conan)
 
 conan_cmake_run(
     CONANFILE conanfile.py

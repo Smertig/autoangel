@@ -9,10 +9,9 @@
 #include <memory>
 #include <istream>
 #include <unordered_map>
+#include <variant>
 
 #include <src/util/encoding.h>
-
-#include <mpark/variant.hpp>
 
 namespace elements {
 
@@ -112,7 +111,7 @@ struct raw_meta_type {
 };
 
 class meta_type {
-    using storage_t = mpark::variant<
+    using storage_t = std::variant<
             fundamental_meta_type<int32_t>,
             fundamental_meta_type<int64_t>,
             fundamental_meta_type<float>,
@@ -129,21 +128,21 @@ public:
     static meta_type parse(const std::string& str);
 
     std::size_t size(std::istream& is) const {
-        return mpark::visit([&is](const auto& meta) -> std::size_t {
+        return std::visit([&is](const auto& meta) -> std::size_t {
             return meta.size(is);
         }, _storage);
     }
 
     template <class F> // signature void(const T&)
     void get(F&& f, const void* value) {
-        mpark::visit([f = std::forward<F>(f), value](auto&& meta) mutable {
+        std::visit([f = std::forward<F>(f), value](auto&& meta) mutable {
             std::forward<decltype(meta)>(meta).get(std::forward<F>(f), value);
         }, _storage);
     }
 
     template <class F> // signature void(T&)
     void set(F&& f, void* value) {
-        mpark::visit([f = std::forward<F>(f), value](auto&& meta) mutable {
+        std::visit([f = std::forward<F>(f), value](auto&& meta) mutable {
             std::forward<decltype(meta)>(meta).set(std::forward<F>(f), value);
         }, _storage);
     }

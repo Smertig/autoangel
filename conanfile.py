@@ -5,11 +5,9 @@ class AutoAngelConan(ConanFile):
 
     requires = [
         "zlib/1.2.11",
-        "boost/1.73.0",
-        "mpark-variant/1.4.0",
-        "fmt/5.3.0",
-        "sol2/2.20.6",
-        "pybind11/2.4.3",
+        "fmt/7.1.2",
+        "sol2/3.2.2",
+        "pybind11/2.6.1",
         "libiconv/1.16"
     ]
 
