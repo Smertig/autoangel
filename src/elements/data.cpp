@@ -15,154 +15,154 @@
 namespace elements {
 
 void data::parse(std::ifstream& ifs, const std::vector<config::ptr>& confs) {
-	auto read_some = [&](auto& out) {
-		ifs.read(reinterpret_cast<char*>(&out), sizeof(out));
-	};
+    auto read_some = [&](auto& out) {
+        ifs.read(reinterpret_cast<char*>(&out), sizeof(out));
+    };
 
-	uint16_t version{}, unknown{};
+    uint16_t version{}, unknown{};
 
-	read_some(version);
-	read_some(unknown);
+    read_some(version);
+    read_some(unknown);
 
-	auto it = std::find_if(confs.begin(), confs.end(), [version](auto&& conf) {
-		return conf->version() == version;
-	});
+    auto it = std::find_if(confs.begin(), confs.end(), [version](auto&& conf) {
+        return conf->version() == version;
+    });
 
-	if (it == confs.end()) {
-		throw std::runtime_error("no config for version " + std::to_string(version));
-	}
-	this->_config = *it;
-	auto& conf = *_config;
+    if (it == confs.end()) {
+        throw std::runtime_error("no config for version " + std::to_string(version));
+    }
+    this->_config = *it;
+    auto& conf = *_config;
 
-	_lists.reserve(conf.size());
+    _lists.reserve(conf.size());
 
-	for (auto& list : conf.get_lists()) {
-		const auto prefix_len = [&]() -> std::size_t {
-			if (list->offset != static_cast<std::size_t>(-1)) {
-				return list->offset;
-			}
-			else {
-				if (list->sdt == "SKILLTOME_SUB_TYPE") {
-					uint32_t tag{}, len{};
-					read_some(tag);
-					read_some(len);
-					ifs.seekg(-8, ifs.cur);
-					return 8 + len + 4;
-				}
-				else if (list->sdt == "NPC_WAR_TOWERBUILD_SERVICE") {
-					uint32_t tag{}, len{};
-					read_some(tag);
-					read_some(len);
-					ifs.seekg(-8, ifs.cur);
-					return 8 + len;
-				}
-				else {
-					throw std::runtime_error(fmt::format("unknown structure of '{}' prefix", list->caption));
-				}
-			}
-		}();
-		std::vector<char> prefix(prefix_len);
-		ifs.read(prefix.data(), prefix.size());
+    for (auto& list : conf.get_lists()) {
+        const auto prefix_len = [&]() -> std::size_t {
+            if (list->offset != static_cast<std::size_t>(-1)) {
+                return list->offset;
+            }
+            else {
+                if (list->sdt == "SKILLTOME_SUB_TYPE") {
+                    uint32_t tag{}, len{};
+                    read_some(tag);
+                    read_some(len);
+                    ifs.seekg(-8, ifs.cur);
+                    return 8 + len + 4;
+                }
+                else if (list->sdt == "NPC_WAR_TOWERBUILD_SERVICE") {
+                    uint32_t tag{}, len{};
+                    read_some(tag);
+                    read_some(len);
+                    ifs.seekg(-8, ifs.cur);
+                    return 8 + len;
+                }
+                else {
+                    throw std::runtime_error(fmt::format("unknown structure of '{}' prefix", list->caption));
+                }
+            }
+        }();
+        std::vector<char> prefix(prefix_len);
+        ifs.read(prefix.data(), prefix.size());
 
-		uint32_t length{};
-		read_some(length);
+        uint32_t length{};
+        read_some(length);
 
-		_lists.emplace_back(std::make_shared<data_list>());
-		auto& values_list = *_lists.back();
+        _lists.emplace_back(std::make_shared<data_list>());
+        auto& values_list = *_lists.back();
 
-		values_list.type = list->dt;
-		values_list.space = list->space;
-		values_list.caption = list->caption;
-		values_list.prefix = std::move(prefix);
-		values_list.storage.reserve(length);
+        values_list.type = list->dt;
+        values_list.space = list->space;
+        values_list.caption = list->caption;
+        values_list.prefix = std::move(prefix);
+        values_list.storage.reserve(length);
 
-		for (uint32_t i = 0; i < length; i++) {
-			values_list.storage.emplace_back(std::make_shared<data_value>());
-			auto& value = values_list.storage.back();
+        for (uint32_t i = 0; i < length; i++) {
+            values_list.storage.emplace_back(std::make_shared<data_value>());
+            auto& value = values_list.storage.back();
 
-			for (auto& meta_field : list->fields) {
-				const auto field_size = meta_field.second.size(ifs);
-				std::vector<char> raw_buffer(field_size);
-				ifs.read(raw_buffer.data(), field_size);
+            for (auto& meta_field : list->fields) {
+                const auto field_size = meta_field.second.size(ifs);
+                std::vector<char> raw_buffer(field_size);
+                ifs.read(raw_buffer.data(), field_size);
 
-				auto& field = value->value[meta_field.first];
-				field.vtable = &meta_field.second;
-				field.value = std::move(raw_buffer);
-			}
-		}
-	}
+                auto& field = value->value[meta_field.first];
+                field.vtable = &meta_field.second;
+                field.value = std::move(raw_buffer);
+            }
+        }
+    }
 }
 
 data::data(const char* path) : _path(path) {
-	std::ifstream ifs(path, std::ifstream::binary);
-	if (!ifs) {
-		throw std::runtime_error(fmt::format("cannot open elements.data at '{}'", _path));
-	}
+    std::ifstream ifs(path, std::ifstream::binary);
+    if (!ifs) {
+        throw std::runtime_error(fmt::format("cannot open elements.data at '{}'", _path));
+    }
 
-	if (!ifs.read(reinterpret_cast<char*>(&_version), sizeof(_version))) {
-		throw std::runtime_error(fmt::format("cannot read version from first 2 bytes of '{}'", _path));
-	}
+    if (!ifs.read(reinterpret_cast<char*>(&_version), sizeof(_version))) {
+        throw std::runtime_error(fmt::format("cannot read version from first 2 bytes of '{}'", _path));
+    }
 }
 
 void data::load(config::ptr conf) {
-	std::vector<config::ptr> confs;
-	confs.emplace_back(std::move(conf));
-	load(confs);
+    std::vector<config::ptr> confs;
+    confs.emplace_back(std::move(conf));
+    load(confs);
 }
 
 void data::load(const std::vector<std::shared_ptr<config>>& confs) {
-	std::ifstream ifs;
-	ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    std::ifstream ifs;
+    ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
-	ifs.open(_path, std::ifstream::binary);
+    ifs.open(_path, std::ifstream::binary);
 
-	this->parse(ifs, confs);
+    this->parse(ifs, confs);
 }
 
 void data::save(const char* path, config::ptr conf) {
-	if (!path) {
-		path = _path.c_str();
-	}
+    if (!path) {
+        path = _path.c_str();
+    }
 
-	if (!conf) {
-		conf = _config;
-	}
+    if (!conf) {
+        conf = _config;
+    }
 
-	std::ofstream ofs;
-	ofs.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+    std::ofstream ofs;
+    ofs.exceptions(std::ofstream::failbit | std::ofstream::badbit);
 
-	ofs.open(path, std::ofstream::binary);
+    ofs.open(path, std::ofstream::binary);
 
-	auto write_some = [&](const auto& out) {
-		ofs.write(reinterpret_cast<const char*>(&out), sizeof(out));
-	};
+    auto write_some = [&](const auto& out) {
+        ofs.write(reinterpret_cast<const char*>(&out), sizeof(out));
+    };
 
-	write_some(conf->version());
-	write_some(uint16_t(0x3000));
+    write_some(conf->version());
+    write_some(uint16_t(0x3000));
 
-	size_t list_index = 0;
-	for (auto& list : conf->get_lists()) {
-		auto& values_list = *_lists[list_index++];
+    size_t list_index = 0;
+    for (auto& list : conf->get_lists()) {
+        auto& values_list = *_lists[list_index++];
 
-		auto prefix = std::vector<char>{};
-		if (list->offset != static_cast<std::size_t>(-1)) {
-			prefix = values_list.prefix;
-			prefix.resize(list->offset); // if conf != _config
-		}
+        auto prefix = std::vector<char>{};
+        if (list->offset != static_cast<std::size_t>(-1)) {
+            prefix = values_list.prefix;
+            prefix.resize(list->offset); // if conf != _config
+        }
 
-		ofs.write(prefix.data(), prefix.size());
+        ofs.write(prefix.data(), prefix.size());
 
-		auto length = static_cast<uint32_t>(values_list.size());
-		write_some(length);
+        auto length = static_cast<uint32_t>(values_list.size());
+        write_some(length);
 
-		for (auto& value : values_list) {
-			for (auto& meta_field : list->fields) {
-				auto& field = value->value[meta_field.first];
+        for (auto& value : values_list) {
+            for (auto& meta_field : list->fields) {
+                auto& field = value->value[meta_field.first];
 
-				ofs.write(field.value.data(), field.value.size());
-			}
-		}
-	}
+                ofs.write(field.value.data(), field.value.size());
+            }
+        }
+    }
 }
 
 }
